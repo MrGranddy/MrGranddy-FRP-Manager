@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block title %}Game Setup{% endblock %}
+{% block content %}
+
+<script>
+    var img_names = {{ img_names|tojson }};
+</script>
+
+<div class="vertical-center" id="game_setup">
+    <div class="main-container-game-setup">
+
+
+        <div class="upper-container-game-setup">
+            <div class="game-name-container-game-setup">
+                <input type="text" placeholder="Enter the Name of the Game" style="text-align: center;" id="game-name">
+            </div>
+        </div>
+            
+        <div class="middle-container-game-setup">
+            <div class="image-container-game-setup">
+                <img src="" style="display: none;" id="game-setup-img">
+            </div>
+        </div>
+            
+        <div class="bottom-container-game-setup">
+
+            <div class="num-characters-container-game-setup">
+                <label for="num-characters">Number of characters:</label>
+                <select name="num-characters" id="num-characters">
+                    <option value="" selected disabled hidden>0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+    
+            <div class="create-button-container-game-setup">
+                <a href="#" class="button" onclick="set_game()">Setup Game</a>
+            </div>
+        </div>
+
+        <form method="POST" action="/set_setup_data" id="hidden_info">
+            <input type="hidden" id="input_game_name" name="input_game_name" value="">
+            <input type="hidden" id="input_num_chars" name="input_num_chars" value="">
+        </form>    
+
+    </div>
+</div>
+
+<script>
+    var rand_idx = Math.floor( Math.random() * img_names.length );
+    img = document.getElementById("game-setup-img");
+    img.setAttribute("src", img_names[rand_idx]);
+    img.setAttribute("style", "display: block;");
+
+    function set_game() {
+        input_game_name = document.getElementById("input_game_name");
+        input_game_name.value = document.getElementById("game-name").value;
+        input_num_chars = document.getElementById("input_num_chars");
+        input_num_chars.value = document.getElementById("num-characters").value;
+        document.getElementById("hidden_info").submit();
+    }
+
+</script>
+
+{% endblock %}

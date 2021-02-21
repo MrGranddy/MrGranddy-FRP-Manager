@@ -1,0 +1,364 @@
+{% extends "layout.html" %}
+{% block title %}Character Creation{% endblock %}
+{% block content %}
+
+<script>
+
+    var main_skills = {{ main_skills|tojson }};
+    var sub_skills = {{ sub_skills|tojson }};
+    var spare_skill_points = {{ spare_skill_points|tojson }};
+
+    var added_main_skills = [];
+    for( let i = 0; i < main_skills.length; i++ ){
+        added_main_skills.push( [ main_skills[i][0], 0 ] );
+    }
+    var added_sub_skills = [];
+    for( let i = 0; i < sub_skills.length; i++ ){
+        added_sub_skills.push( [] );
+        for( let j = 0; j < sub_skills[i].length; j++ ){
+            added_sub_skills[i].push( [sub_skills[i][j][0], sub_skills[i][j][1], 0] );
+        }
+    }
+
+    var added_sub_skill_stack = [];
+    for( let i = 0; i < sub_skills.length; i++ ){
+        added_sub_skill_stack.push( [] );
+    }
+
+    function remove_elem_by_idx(arr, idx){
+        var left = arr.slice(0, idx);
+        var right = arr.slice(idx+1, arr.length);
+        return left.concat(right);
+    }
+
+</script>
+
+<div class="vertical-center" id="character_creation">
+    <div class="main-container-creation">
+
+        <div class="creation-left">
+            <div class="skills-creation main-skills-creation">
+                <table id="main-skills-table">
+                </table>
+            </div>
+
+            <div class="skills-creation sub-skills-creation">
+                <table id="sub-skills-table">
+                </table>
+            </div>
+        </div>
+
+        <div class="creation-right">
+            <div class="preview-creation" >
+                <div class="name-class-creation">
+                    <div class="name-creation">
+                        <input type="text" id="character-name" name="character-name" placeholder="Enter Character Name" style="font-size: 25px; width: 90%;">
+                    </div>
+                    <div class="class-creation">
+                        <select name="character-class" id="character-class" style="font-size: 25px; width: 70%;" onchange="load_new_avatar();">
+                            <option value="" selected disabled hidden>Select Class</option>
+                            <option value="assassin">Assassin</option>
+                            <option value="archer">Archer</option>
+                            <option value="mage">Mage</option>
+                            <option value="medic">Medic</option>
+                            <option value="gambler">Gambler</option>
+                            <option value="thief">Thief</option>
+                            <option value="warrior">Warrior</option>
+                            <option value="brute">Brute</option>
+                        </select>
+                    </div>
+                    <div class="gender-creation">
+                        <select name="character-gender" id="character-gender" style="font-size: 25px; width: 70%;" onchange="load_new_avatar();">
+                            <option value="" selected disabled hidden>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="nonbinary">Non-Binary</option>
+                            <option value="none">Not Specified</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="image-container-creation">
+                    <img src="" style="display: none;" id="character-avatar-img">
+                </div>
+
+                <div class="buttonbar-creation">
+                    <a href="#" class="button" onclick="submit_character()">UNDEFINED</a>
+                </div> 
+
+            </div>
+        </div>
+
+        <form method="POST" action="/add_character" id="set_character">
+            <input type="hidden" id="input_character_name" name="input_character_name" value="">
+            <input type="hidden" id="input_character_class" name="input_character_class" value="">
+            <input type="hidden" id="input_character_gender" name="input_character_gender" value="">
+            <input type="hidden" id="input_body_name" name="input_body_name" value="">
+            <input type="hidden" id="input_head_name" name="input_head_name" value="">
+            <input type="hidden" id="input_added_main_skills" name="input_added_main_skills" value="">
+            <input type="hidden" id="input_added_sub_skills" name="input_added_sub_skills" value="">
+        </form>    
+
+
+    </div>
+</div>
+
+
+<script>
+
+    var main_skills_table = document.getElementById("main-skills-table");
+    for( let i = 0; i < main_skills.length; i++ ){
+        var tr = main_skills_table.insertRow();
+        if( i % 2 == 0 )
+            tr.setAttribute("style", "background: rgba(0, 0, 0, 0.1);");
+
+        var td = tr.insertCell();
+        var img = document.createElement("img");
+        img.setAttribute("style", "display: none;");
+        img.setAttribute("src", "{{ url_for('static', filename='icons/disimprove_skill.svg') }}");
+        td.appendChild(img);
+        td.setAttribute("onclick", "disimprove('main', " + i + ")");
+
+        td = tr.insertCell();
+        td.innerHTML = main_skills[i][0];
+
+        td = tr.insertCell();
+        td.innerHTML = main_skills[i][1];
+
+        img = document.createElement("img");
+        img.setAttribute("src", "{{ url_for('static', filename='icons/improve_skill.svg') }}");
+        if( spare_skill_points[0][1] === 0 )
+            img.setAttribute("style", "display: none;");
+
+        td = tr.insertCell();
+        td.appendChild(img);
+        td.setAttribute("onclick", "improve('main', " + i + ")");
+    }
+
+    var sub_skills_table = document.getElementById("sub-skills-table");
+    for( let i = 0; i < sub_skills.length; i++ ){
+        for( let j = 0; j < sub_skills[i].length; j++ ){
+            var tr = sub_skills_table.insertRow();
+            tr.setAttribute("id", sub_skills[i][j][0].toLowerCase() + "_skill");
+
+            let alpha = j % 2 == 1 ? 0.4 : 0.3;
+            let brightness = j % 2 == 1 ? 120 : 180;
+
+            if( i == 0 )
+                tr.setAttribute("style", "background: rgba(" + brightness + ", 0, 0, " + alpha + ");")
+            else if( i == 1 )
+                tr.setAttribute("style", "background: rgba(0, " + brightness + ", 0, " + alpha + ");")
+            else if( i == 2 )
+                tr.setAttribute("style", "background: rgba(0, 0, " + brightness + ", " + alpha + ");")
+            else if( i == 3 )
+                tr.setAttribute("style", "background: rgba(" + brightness + ", " + brightness + ", 0, " + alpha + ");")
+
+            var td = tr.insertCell();
+            var img = document.createElement("img");
+            img.setAttribute("style", "display: none;");
+            img.setAttribute("src", "{{ url_for('static', filename='icons/disimprove_skill.svg') }}");
+            td.appendChild(img);
+            td.setAttribute("onclick", "disimprove('sub', [" + [i, j] + "])");
+
+            td = tr.insertCell();
+            td.innerHTML = sub_skills[i][j][1];
+
+            td = tr.insertCell();
+            td.innerHTML = sub_skills[i][j][2];
+
+            img = document.createElement("img");
+            img.setAttribute("src", "{{ url_for('static', filename='icons/improve_skill.svg') }}");
+
+            if( spare_skill_points[i+1][1] === 0 ){
+                img.setAttribute("style", "display: none;");
+            }
+
+            td = tr.insertCell();
+            td.appendChild(img);
+            td.setAttribute("onclick", "improve('sub', [" + [i, j] + "])");
+        }
+    }
+
+    function update_main_skills(){
+        var main_skills_table = document.getElementById("main-skills-table");
+        trs = main_skills_table.getElementsByTagName("tr");
+        for( let i = 0; i < main_skills.length; i++ ){
+            var tr = trs[i];
+            tds = tr.getElementsByTagName("td");
+
+            var td = tds[0];
+            var img = td.getElementsByTagName("img")[0];
+
+            if( added_main_skills[i][1] > 0 )
+                img.setAttribute("style", "display: inline-block;");
+            else
+                img.setAttribute("style", "display: none;");
+
+            td = tds[2];
+            td.innerHTML = main_skills[i][1] + added_main_skills[i][1];
+
+            td = tds[3];
+            img = td.getElementsByTagName("img")[0];
+
+            if( spare_skill_points[0][1] <= 0 )
+                img.setAttribute("style", "display: none;");
+            else
+                img.setAttribute("style", "display: inline-block;");
+        }
+    }
+
+    function update_sub_skills(){
+        var sub_skills_table = document.getElementById("sub-skills-table");
+        var trs = sub_skills_table.getElementsByTagName("tr");
+        var tr_idx = 0;
+        for( let i = 0; i < sub_skills.length; i++ ){
+            for( let j = 0; j < sub_skills[i].length; j++ ){
+                var tr = trs[ tr_idx ];
+                tr_idx += 1;
+                tds = tr.getElementsByTagName("td");
+
+                var td = tds[0];
+                var img = td.getElementsByTagName("img")[0];
+                if( added_sub_skills[i][j][2] > 0 )
+                    img.setAttribute("style", "display: inline-block;");
+                else{
+                    img.setAttribute("style", "display: none;");
+                }
+    
+                td = tds[2];
+                td.innerHTML = sub_skills[i][j][2] + added_sub_skills[i][j][2];
+
+                td = tds[3];
+                img = td.getElementsByTagName("img")[0];
+
+                if( spare_skill_points[i+1][1] <= 0 )
+                    img.setAttribute("style", "display: none;");
+                else
+                    img.setAttribute("style", "display: inline-block;");
+
+            }
+        }
+    }
+
+    function improve(type, idx){
+        if( type === "main" && spare_skill_points[0][1] > 0 ){
+            added_main_skills[idx][1] += 1;
+            spare_skill_points[0][1] -= 1;
+            spare_skill_points[idx+1][1] += 2;
+            update_main_skills();
+            update_sub_skills();
+        }
+        else if( type === "sub" && spare_skill_points[idx[0]+1][1] > 0 ){
+            added_sub_skills[idx[0]][idx[1]][2] += 1;
+            spare_skill_points[idx[0]+1][1] -= 1;
+            added_sub_skill_stack[idx[0]].push( idx[1] );
+            update_sub_skills();
+        }
+    }
+
+    function disimprove(type, idx){
+        if( type === "main" && added_main_skills[idx][1] > 0 ){
+            added_main_skills[idx][1] -= 1;
+            spare_skill_points[0][1] += 1;
+
+            if( spare_skill_points[idx+1][1] >= 2 ){
+                spare_skill_points[idx+1][1] -= 2;
+            }
+            else{
+                let num_to_delete = 2 - spare_skill_points[idx+1][1];
+                let len = added_sub_skill_stack[idx].length;
+                for( let i = 0; i < num_to_delete; i++ ){
+                    var sub_idx = added_sub_skill_stack[idx][-i-1+len];
+                    added_sub_skills[idx][sub_idx][2] -= 1;
+                }
+                added_sub_skill_stack[idx] = added_sub_skill_stack[idx].slice(0, -num_to_delete);
+                spare_skill_points[idx+1][1] = 0;
+            }
+
+
+            update_main_skills();
+            update_sub_skills();
+        }
+        else if( type === "sub" && added_sub_skills[idx[0]][idx[1]][2] > 0 ){
+            added_sub_skills[idx[0]][idx[1]][2] -= 1;
+            spare_skill_points[idx[0]+1][1] += 1;
+
+            let rem_idx = -1;
+            for( let i = added_sub_skill_stack[idx[0]].length - 1; i >= 0; i-- ){
+                if( added_sub_skill_stack[idx[0]][i] == idx[1] ){
+                    rem_idx = i;
+                    break;
+                }
+            }
+            added_sub_skill_stack[idx[0]] = remove_elem_by_idx(added_sub_skill_stack[idx[0]], rem_idx);
+
+            update_sub_skills();
+        }
+    }
+
+    function change_avatar_img(response) {
+
+        let img_str = response.img_str;
+        let head_name = response.head_name;
+        let body_name = response.body_name;
+
+        let img = document.getElementById("character-avatar-img");
+        img.setAttribute("src", "data:image/png;base64," + img_str);
+        img.setAttribute("style", "display: block;");
+
+        let input_body_name = document.getElementById("input_head_name");
+        let input_head_name = document.getElementById("input_body_name");
+
+        input_body_name.value = body_name;
+        input_head_name.value = head_name;
+    }
+
+    function load_new_avatar() {
+
+        _class = document.getElementById("character-class").value;
+        gender = document.getElementById("character-gender").value;
+
+        if( _class == "" || gender == "" ) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/receive_character_avatar",
+            contentType: "application/json",
+            data: JSON.stringify({
+                class: _class,
+                gender: gender, 
+            }),
+            dataType: "json",
+            success: function(response){
+                change_avatar_img(response);
+            },
+            error: function(e) {
+                console.log('Error!', e);
+            }
+        });
+
+    }
+
+    function submit_character() {
+        
+        let input_character_name = document.getElementById("input_character_name");
+        let input_character_class = document.getElementById("input_character_class");
+        let input_character_gender = document.getElementById("input_character_gender");
+        //let input_body_name = document.getElementById("input_body_name");
+        //let input_head_name = document.getElementById("input_head_name");
+        let input_added_main_skills = document.getElementById("input_added_main_skills");
+        let input_added_sub_skills = document.getElementById("input_added_sub_skills");
+
+        input_character_name.value = document.getElementById("character-name").value;
+        input_character_class.value = document.getElementById("character-class").value;
+        input_character_gender.value = document.getElementById("character-gender").value;
+        input_added_main_skills.value = JSON.stringify( added_main_skills );
+        input_added_sub_skills.value = JSON.stringify( added_sub_skills );
+
+        document.getElementById("set_character").submit();
+
+    }
+
+</script>
+
+{% endblock %}

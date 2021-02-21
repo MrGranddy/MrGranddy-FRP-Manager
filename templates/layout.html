@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <style>
+        .vertical-center {
+            position: absolute;
+            margin: 0;
+            left: 50%;
+            top: 10%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+        }
+
+        a.button:link, a.button:visited {
+          background-color: #4e4e50;;
+          color: white;
+          padding: 14px 25px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        a.button:hover, a.button:active {
+          background-color: #5f5f61;;
+        }
+
+        div.vertical-center#character_creation {
+          background-color: #4e4e50;
+          height: 80%;
+          width: 60%;
+        }
+
+        .main-container-creation {
+          margin: 10px 10px 10px 10px;
+          display: block;
+          position: absolute;
+          height:auto;
+          width: auto;
+          bottom:0;
+          top:0;
+          left:0;
+          right:0;
+          display: flex;
+        }
+
+        .creation-left {
+          height: 100%;
+          width: 25%;
+          margin-right: 10px;
+          float: left;
+          display: flex;
+          flex-flow: column;
+        }
+
+        .creation-right {
+          height: 100%;
+          flex-grow: 1;
+          float: right;
+        }
+
+        .main-skills-creation {
+          background: #6f2232;
+          width: 100%;
+          height: 30%;
+          margin-bottom: 10px;
+        }
+
+        .skills-creation table{
+          height: 100%;
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .skills-creation table td{
+          text-align: center;
+          border: 0px solid black;
+          border-collapse: collapse;
+          width: 25%;
+          vertical-align: middle;
+          color: white;
+          font-family: Arial, Helvetica, sans-serif;
+          font-weight: bold;
+          position: relative;
+        }
+        
+        .skills-creation table td img {
+          height: 24px;
+          width: 24px;
+          display: inline-block;
+        }
+
+        .sub-skills-creation table td img {
+          height: 18px;
+          width: 18px;
+          display: inline-block;
+        }
+
+        .sub-skills-creation {
+          background: #6f2232;
+          width: 100%;
+          flex-grow: 1;
+        }
+
+        .preview-creation {
+          background: #6f2232;
+          height: 100%;
+          width: 100%;
+        }
+
+        .name-class-creation {
+          height: 10%;
+          width: 100%;
+          background: rgba(0, 0, 0, 0.2);
+        }
+
+        .name-creation {
+          width: 40%;
+          height: 100%;
+          float: left;
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .class-creation {
+          width: 30%;
+          height: 100%;
+          float: left;
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .gender-creation {
+          width: 30%;
+          height: 100%;
+          float: left;
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        #character-name {
+          display: block;
+          margin : 0 auto;
+        }
+
+        #character-class {
+          display: block;
+          margin : 0 auto;
+        }
+
+        #character-gender {
+          display: block;
+          margin : 0 auto;
+        }
+
+        .image-container-creation {
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 80%;
+          margin-top: 20px;
+        }
+
+        #character-avatar-img {
+          max-height: 100%;
+          width: auto;
+        }
+
+        .buttonbar-creation {
+          height: 10%;
+          position: relative;
+        }
+
+        .buttonbar-creation .button {
+          position: absolute; 
+          bottom: 30px;
+          right: 10px;
+        }
+
+        div.vertical-center#game_setup {
+          background-color: #4e4e50;
+          height: 80%;
+          width: 60%;
+          display: flex;
+        }
+
+        .main-container-game-setup {
+          background: #6f2232;
+          margin: 10px 10px 10px 10px;
+          flex: 1;
+        }
+
+        .upper-container-game-setup {
+          width: 100%;
+          height: 20%;
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .middle-container-game-setup {
+          width: 100%;
+          height: 60%;
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .bottom-container-game-setup {
+          width: 100%;
+          height: 20%;
+          position: relative;
+        }
+
+        .game-name-container-game-setup {
+          display: block;
+          margin : 0 auto;
+          width: 80%;
+        }
+
+        .game-name-container-game-setup input{
+          width: 100%;
+          font-size: 32px;
+        }
+
+        .num-characters-container-game-setup {
+          position: absolute; 
+          bottom: 7%;
+          left: 3%;
+        }
+
+        .num-characters-container-game-setup label {
+          font-family: Arial, Helvetica, sans-serif;
+          margin-bottom: 5px;
+          font-size: 24px;
+          color: white;
+          text-align: center;
+          margin-right: 5px;
+        }
+
+        .num-characters-container-game-setup select {
+          margin : 0 auto;
+          font-size: 32px;
+          text-align: center;
+        }
+
+        .create-button-container-game-setup {
+          position: absolute; 
+          bottom: 7%;
+          right: 1%; 
+        }
+
+        .image-container-game-setup {
+          margin: auto auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 70%;
+        }
+
+        #game-setup-img {
+          max-width: 100%;
+          height: auto;
+        }
+
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <main>
+      <section class="section">
+        <div class="content">
+          {% block content %}{% endblock %}
+        </div>
+      </section>
+    </main>
+
+  </body>
+
+</html>

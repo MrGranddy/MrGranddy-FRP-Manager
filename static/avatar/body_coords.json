@@ -1,0 +1,18 @@
+{
+    "female_archer.png": [1108, 1420, 260, 600],
+    "female_assassin.png": [181, 475, 184, 481],
+    "female_brute.png": [290, 475, 93, 284],
+    "female_gambler.png": [275, 536, 54, 386],
+    "female_mage.png": [228, 281, 73, 145],
+    "female_medic.png": [351, 430, 251, 343],
+    "female_thief.png": [310, 380, 120, 205],
+    "female_warrior.png": [298, 399, 202, 320],
+    "male_archer.png": [223, 327, 40, 170],
+    "male_assassin.png": [238, 334, 54, 162],
+    "male_brute.png": [535, 673, 160, 347],
+    "male_gambler.png": [216, 416, 56, 267],
+    "male_mage.png": [235, 286, 29, 91],
+    "male_medic.png": [281, 344, 45, 128],
+    "male_thief.png": [304, 378, 107, 201],
+    "male_warrior.png": [372, 510, 58, 201]
+}
