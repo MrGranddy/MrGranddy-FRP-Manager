@@ -5,7 +5,7 @@ class GameState:
 
         self.game_name = ""
         self.save_name = ""
-        self.number_of_characters = 0
+        self.number_of_characters = -1
         self.characters = []
         self.creation_date = None
 

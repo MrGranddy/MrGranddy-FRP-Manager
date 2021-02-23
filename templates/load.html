@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Load{% endblock %}
+{% block content %}
+
+<div class="vertical-center" id="load">
+    <div class="main-container-load">
+
+        <div class="file-input-container">
+            <input type="file" id="load_file" name="load_file" accept="application/json" style="display: none;" onchange="send_load_file()">
+            <a class="button" href="#" onclick="file_load_window()">Select Load File</a>
+        </div>
+
+        <form method="POST" action="/load_game" id="send_load">
+            <input type="hidden" id="load-file-input" name="load-file-input" value="">
+        </form>
+
+    </div>
+</div>
+
+<script>
+    function file_load_window() {
+        document.getElementById("load_file").click();
+    }
+
+    function send_load_file() {
+        document.getElementById("load-file-input").value = document.getElementById("load_file").value;
+        document.getElementById("send_load").submit();
+    }
+
+</script>
+
+
+{% endblock %}

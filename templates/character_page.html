@@ -52,9 +52,14 @@
             <div class="preview-creation" >
                 <div class="name-class-creation">
                     <div class="name-creation">
+                        {% if character_name is none %}
                         <input type="text" id="character-name" name="character-name" placeholder="Enter Character Name" style="font-size: 25px; width: 90%;">
+                        {% else %}
+                        <span class="static-character-name" id="static-character-name">{{character_name}}</span>
+                        {% endif %}
                     </div>
                     <div class="class-creation">
+                        {% if character_class is none %}
                         <select name="character-class" id="character-class" style="font-size: 25px; width: 70%;" onchange="load_new_avatar();">
                             <option value="" selected disabled hidden>Select Class</option>
                             <option value="assassin">Assassin</option>
@@ -65,9 +70,13 @@
                             <option value="thief">Thief</option>
                             <option value="warrior">Warrior</option>
                             <option value="brute">Brute</option>
+                         {% else %}
+                         <span class="static-character-class">{{character_class}}</span>
+                         {% endif %}
                         </select>
                     </div>
                     <div class="gender-creation">
+                        {% if character_gender is none %}
                         <select name="character-gender" id="character-gender" style="font-size: 25px; width: 70%;" onchange="load_new_avatar();">
                             <option value="" selected disabled hidden>Select Gender</option>
                             <option value="male">Male</option>
@@ -75,15 +84,28 @@
                             <option value="nonbinary">Non-Binary</option>
                             <option value="none">Not Specified</option>
                         </select>
+                        {% else %}
+                        <span class="static-character-gender">{{character_gender}}</span>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="image-container-creation">
+                    {% if character_avatar is none %}
                     <img src="" style="display: none;" id="character-avatar-img">
+                    {% else %}
+                    <img src="data:image/png;base64,{{character_avatar}}" style="display: block;" id="character-avatar-img">
+                    {% endif %}
                 </div>
 
                 <div class="buttonbar-creation">
-                    <a href="#" class="button" onclick="submit_character()">UNDEFINED</a>
+                    {% if button_state == 0 %}
+                        <a href="#" class="button" onclick="submit_character()">Start Game!</a>
+                    {% elif button_state == 1 %}
+                        <a href="#" class="button" onclick="submit_character()">Continue</a>
+                    {% elif button_state == 2 %}
+                        <a href="#" class="button" onclick="update_character()">Done</a>
+                    {% endif %}
                 </div> 
 
             </div>
@@ -97,7 +119,13 @@
             <input type="hidden" id="input_head_name" name="input_head_name" value="">
             <input type="hidden" id="input_added_main_skills" name="input_added_main_skills" value="">
             <input type="hidden" id="input_added_sub_skills" name="input_added_sub_skills" value="">
-        </form>    
+        </form>
+    
+        <form method="POST" action="/update_character" id="update_character">
+            <input type="hidden" id="input_added_main_skills_update" name="input_added_main_skills_update" value="">
+            <input type="hidden" id="input_added_sub_skills_update" name="input_added_sub_skills_update" value="">
+            <input type="hidden" id="input_name_update" name="input_name_update" value="">
+        </form>  
 
 
     </div>
@@ -306,8 +334,8 @@
         img.setAttribute("src", "data:image/png;base64," + img_str);
         img.setAttribute("style", "display: block;");
 
-        let input_body_name = document.getElementById("input_head_name");
-        let input_head_name = document.getElementById("input_body_name");
+        let input_body_name = document.getElementById("input_body_name");
+        let input_head_name = document.getElementById("input_head_name");
 
         input_body_name.value = body_name;
         input_head_name.value = head_name;
@@ -344,8 +372,6 @@
         let input_character_name = document.getElementById("input_character_name");
         let input_character_class = document.getElementById("input_character_class");
         let input_character_gender = document.getElementById("input_character_gender");
-        //let input_body_name = document.getElementById("input_body_name");
-        //let input_head_name = document.getElementById("input_head_name");
         let input_added_main_skills = document.getElementById("input_added_main_skills");
         let input_added_sub_skills = document.getElementById("input_added_sub_skills");
 
@@ -357,6 +383,18 @@
 
         document.getElementById("set_character").submit();
 
+    }
+
+    function update_character() {
+        let input_added_main_skills = document.getElementById("input_added_main_skills_update");
+        let input_added_sub_skills = document.getElementById("input_added_sub_skills_update");
+        let input_name = document.getElementById("input_name_update");
+
+        input_added_main_skills.value = JSON.stringify( added_main_skills );
+        input_added_sub_skills.value = JSON.stringify( added_sub_skills );
+        input_name.value = document.getElementById("static-character-name").innerHTML;
+
+        document.getElementById("update_character").submit();
     }
 
 </script>

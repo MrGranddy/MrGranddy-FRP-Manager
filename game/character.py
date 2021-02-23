@@ -95,8 +95,6 @@ class Character:
         else:
             return st.NOT_ENOUGH
 
-    def set_name(self, name):
-        self.character_name = name
 
     def character_setup(self, args):
         name = args['input_character_name']
@@ -113,6 +111,30 @@ class Character:
 
         self.body_name = body_name
         self.head_name = head_name
+
+        for main_skill in added_main_skills:
+            key = main_skill[0].lower()
+            val = main_skill[1]
+            status = self.main_skill_up(key, val)
+
+            if status != st.SUCCESS:
+                return -1
+
+        for sub_skill_main in added_sub_skills:
+            for sub_skill in sub_skill_main:
+                key = sub_skill[1].lower()
+                val = sub_skill[2]
+                status = self.sub_skill_up(key, val)
+
+                if status != st.SUCCESS:
+                    return -1
+
+        return 0
+
+    def character_update(self, args):
+
+        added_main_skills = json.loads(args['input_added_main_skills_update'])
+        added_sub_skills = json.loads(args['input_added_sub_skills_update'])
 
         for main_skill in added_main_skills:
             key = main_skill[0].lower()

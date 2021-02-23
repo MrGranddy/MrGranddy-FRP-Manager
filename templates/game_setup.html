@@ -2,10 +2,6 @@
 {% block title %}Game Setup{% endblock %}
 {% block content %}
 
-<script>
-    var img_names = {{ img_names|tojson }};
-</script>
-
 <div class="vertical-center" id="game_setup">
     <div class="main-container-game-setup">
 
@@ -18,7 +14,7 @@
             
         <div class="middle-container-game-setup">
             <div class="image-container-game-setup">
-                <img src="" style="display: none;" id="game-setup-img">
+                <img src="{{cover_art_path}}" id="game-setup-img">
             </div>
         </div>
             
@@ -53,10 +49,6 @@
 </div>
 
 <script>
-    var rand_idx = Math.floor( Math.random() * img_names.length );
-    img = document.getElementById("game-setup-img");
-    img.setAttribute("src", img_names[rand_idx]);
-    img.setAttribute("style", "display: block;");
 
     function set_game() {
         input_game_name = document.getElementById("input_game_name");

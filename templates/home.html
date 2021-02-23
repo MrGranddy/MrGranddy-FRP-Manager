@@ -5,6 +5,9 @@
 <div class="vertical-center">
     <a href="/game_setup" class="button">New Game</a>
     <a href="/load_game" class="button">Load Game</a>
+    {% if game_loaded %}
+    <a href="/character_creation" class="button">Continue</a>
+    {% endif %}
 </div>
 
 {% endblock %}

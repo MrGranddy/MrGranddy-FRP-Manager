@@ -5,6 +5,59 @@
 <div class="vertical-center" id="game">
     <div class="main-container-game">
 
+        <div class="character-bar-container-game">
+
+            {% for character in characters %}
+
+            <div class="character-bar-game" >
+                <div class="character-bar-avatar-game">
+                    <div class="character-avatar-image-container-game">
+                        <a href="character/{{character.character_name}}">
+                            <img src="data:image/png;base64,{{icons[loop.index-1]}}" id="character_{{loop.index-1}}_icon" class="character-avatar-img">
+                        </a>
+                    </div>
+                </div>
+                <div class="character-bar-info-game">
+                    <div class="character-info-name-container-game">
+                        <span class="character-info-name"> {{character.character_name}} </span>
+                    </div>
+                    <div class="character-info-main-skills-container-game">
+                        <table class="main-skill-table-game">
+                            <tr>
+                                <td> <span class="main_skill_text">STR:</span> {{character.main_skills["str"]}} </td>
+                                <td> <span class="main_skill_text">AGI:</span> {{character.main_skills["agi"]}} </td>
+                                <td> <span class="main_skill_text">INT:</span> {{character.main_skills["int"]}} </td>
+                                <td> <span class="main_skill_text">CHA:</span> {{character.main_skills["cha"]}} </td>
+                            </tr>
+                        </table>
+                        <table class="sub-skill-table-game">
+                            <tr>
+                                <td> <span class="sub_skill_text str_sub_skill">END:</span> {{character.sub_skills["str"]["endurance"]}} </td>
+                                <td> <span class="sub_skill_text agi_sub_skill">SNK:</span> {{character.sub_skills["agi"]["sneak"]}} </td>
+                                <td> <span class="sub_skill_text int_sub_skill">SPL:</span> {{character.sub_skills["int"]["spell"]}} </td>
+                                <td> <span class="sub_skill_text cha_sub_skill">PER:</span> {{character.sub_skills["cha"]["persuasion"]}} </td>
+                            </tr>
+                            <tr>
+                                <td> <span class="sub_skill_text str_sub_skill">POW:</span> {{character.sub_skills["str"]["power"]}} </td>
+                                <td> <span class="sub_skill_text agi_sub_skill">SPD:</span> {{character.sub_skills["agi"]["speed"]}} </td>
+                                <td> <span class="sub_skill_text int_sub_skill">HERB:</span> {{character.sub_skills["int"]["herbalogy"]}} </td>
+                                <td> <span class="sub_skill_text cha_sub_skill">LUCK:</span> {{character.sub_skills["cha"]["luck"]}} </td>
+                            </tr>
+                            <tr>
+                                <td> <span class="sub_skill_text str_sub_skill">WPN:</span> {{character.sub_skills["str"]["weapon"]}} </td>
+                                <td> <span class="sub_skill_text agi_sub_skill">PRE:</span> {{character.sub_skills["agi"]["precision"]}} </td>
+                                <td> <span class="sub_skill_text int_sub_skill">AWR:</span> {{character.sub_skills["int"]["awareness"]}} </td>
+                                <td> </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
     </div>
 </div>
 
